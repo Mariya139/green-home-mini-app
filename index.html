@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#244b35">
+<title>GREEN HOME — рослини для дому</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+:root {
+  --green: #244b35;
+  --light: #edf3e9;
+  --cream: #faf9f5;
+  --text: #26342a;
+  --muted: #718074;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  padding-bottom: 85px;
+}
+header {
+  background: var(--green);
+  color: white;
+  padding: 22px 18px;
+}
+.logo { font-size: 24px; font-weight: bold; letter-spacing: 2px; }
+header p { margin: 7px 0 0; font-size: 14px; opacity: .85; }
+main { padding: 18px; max-width: 650px; margin: auto; }
+.hero {
+  padding: 25px 20px;
+  border-radius: 20px;
+  background: var(--light);
+  margin-bottom: 22px;
+}
+.hero h1 { font-size: 28px; margin: 0 0 10px; line-height: 1.2; }
+.hero p { line-height: 1.5; margin-bottom: 18px; }
+button {
+  border: 0;
+  border-radius: 12px;
+  padding: 13px 17px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.primary { background: var(--green); color: white; }
+.secondary { background: var(--light); color: var(--green); }
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 22px 0 14px;
+}
+h2 { font-size: 21px; margin: 0; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+}
+.card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 3px 12px #203c2010;
+}
+.card img {
+  display: block;
+  width: 100%;
+  height: 145px;
+  object-fit: cover;
+  background: var(--light);
+}
+.card-body { padding: 12px; }
+.card h3 { font-size: 15px; margin: 0 0 7px; }
+.card p { font-size: 12px; color: var(--muted); margin: 0 0 10px; line-height: 1.4; }
+.price { font-size: 17px; font-weight: bold; margin-bottom: 11px; }
+.card button { width: 100%; padding: 11px 5px; font-size: 13px; }
+.badge {
+  display: inline-block;
+  background: #dce9d9;
+  color: var(--green);
+  border-radius: 20px;
+  padding: 5px 9px;
+  font-size: 11px;
+  margin-bottom: 9px;
+}
+.page { display: none; }
+.page.active { display: block; }
+.item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+}
+.item-row img {
+  width: 68px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.item-info { flex: 1; min-width: 0; }
+.item-info strong { display: block; font-size: 14px; margin-bottom: 6px; }
+.item-info small { color: var(--muted); }
+.quantity { display: flex; align-items: center; gap: 8px; }
+.quantity button { padding: 6px 10px; background: var(--light); color: var(--green); }
+.total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 19px;
+  font-weight: bold;
+  padding: 18px 0;
+}
+form label { display: block; font-size: 14px; margin: 14px 0 7px; }
+input, textarea, select {
+  width: 100%;
+  border: 1px solid #d9e0d7;
+  border-radius: 11px;
+  padding: 13px;
+  font-size: 16px;
+  background: white;
+}
+textarea { resize: vertical; min-height: 75px; }
+form button { width: 100%; margin-top: 18px; }
+.notice {
+  background: #fff4d8;
+  padding: 13px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 15px 0;
+}
+.empty { text-align: center; padding: 35px 10px; color: var(--muted); }
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #e5e9e3;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 5px calc(10px + env(safe-area-inset-bottom));
+  z-index: 5;
+}
+.bottom-nav button {
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 8px;
+}
+.bottom-nav button.active { color: var(--green); }
+.full { width: 100%; }
+.success { text-align: center; padding: 35px 10px; }
+.success .icon { font-size: 55px; }
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 25px 10px; }
+@media (max-width: 350px) {
+  main { padding: 12px; }
+  .grid { gap: 9px; }
+  .card img { height: 120px; }
+  .card-body { padding: 9px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">🌿 GREEN HOME</div>
+  <p>Рослини, які роблять дім затишнішим</p>
+</header>
+
+<main>
+
+<section id="home" class="page active">
+  <div class="hero">
+    <span class="badge">ТВОЯ ЗЕЛЕНА ІСТОРІЯ</span>
+    <h1>Трохи природи — ближче до дому 🌱</h1>
+    <p>Кімнатні рослини для затишку, свіжості та гарного настрою. Обирай свого зеленого друга!</p>
+    <button class="primary" onclick="showPage('catalog')">Обрати рослину →</button>
+  </div>
+
+  <div class="section-title">
+    <h2>Наші рослини</h2>
+    <button class="secondary" onclick="showPage('catalog')">Усі →</button>
+  </div>
+
+  <div id="featured" class="grid"></div>
+
+  <div class="hero" style="margin-top:24px">
+    <h2>🌱 Не знаєш, що обрати?</h2>
+    <p>Почни з невибагливої рослини, яка прикрасить твій простір.</p>
+    <button class="primary" onclick="showPage('catalog')">Переглянути каталог</button>
+  </div>
+</section>
+
+<section id="catalog" class="page">
+  <h2 style="margin-bottom:8px">Каталог рослин 🌿</h2>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:20px">
+    Знайди рослину для свого дому
+  </p>
+  <div id="products" class="grid"></div>
+</section>
+
+<section id="cart" class="page">
+  <h2 style="margin-bottom:20px">🛒 Кошик</h2>
+  <div id="cartItems"></div>
+  <div id="cartSummary" style="display:none">
+    <div class="total"><span>Разом:</span><span id="total">0 грн</span></div>
+    <button class="primary full" onclick="showPage('checkout')">Оформити замовлення</button>
+  </div>
+  <div id="emptyCart" class="empty">
+    <div style="font-size:45px">🪴</div>
+    <p>Твій кошик поки порожній</p>
+    <button class="primary" onclick="showPage('catalog')">Перейти до каталогу</button>
+  </div>
+</section>
+
+<section id="checkout" class="page">
+  <h2>Оформлення замовлення</h2>
+  <p style="color:var(--muted);font-size:14px">Заповни дані для оформлення покупки.</p>
+
+  <form id="orderForm">
+    <label for="customerName">Твоє ім'я *</label>
+    <input id="customerName" name="name" required placeholder="Як до тебе звертатися?">
+
+    <label for="customerPhone">Номер телефону *</label>
+    <input id="customerPhone" name="phone" type="tel" required placeholder="+380...">
+
+    <label for="delivery">Спосіб отримання *</label>
+    <select id="delivery" name="delivery" required>
+      <option value="">Обери спосіб</option>
+      <option>Нова пошта</option>
+      <option>Укрпошта</option>
+      <option>Самовивіз</option>
+    </select>
+
+    <label for="address">Місто та адреса / відділення *</label>
+    <input id="address" name="address" required placeholder="Місто, номер відділення">
+
+    <label for="comment">Коментар до замовлення</label>
+    <textarea id="comment" name="comment" placeholder="Побажання до замовлення"></textarea>
+
+    <div class="total"><span>До сплати:</span><span id="checkoutTotal">0 грн</span></div>
+    <button class="primary" type="submit">Підготувати замовлення</button>
+  </form>
+
+  <div class="notice">
+    Це демонстраційний магазин. Замовлення не надсилається автоматично продавцю.
+    Після оформлення ти зможеш скопіювати його текст.
+  </div>
+</section>
+
+<section id="success" class="page">
+  <div class="success">
+    <div class="icon">🌿</div>
+    <h2>Замовлення підготовлено!</h2>
+    <p>Скопіюй його текст, щоб передати продавцю.</p>
+    <textarea id="orderText" rows="10" readonly></textarea>
+    <button class="primary full" style="margin-top:12px" onclick="copyOrder()">📋 Скопіювати замовлення</button>
+    <button class="secondary full" style="margin-top:10px" onclick="showPage('catalog')">Повернутися до магазину</button>
+  </div>
+</section>
+
+</main>
+
+<footer>GREEN HOME · Затишок починається з рослини 🌿</footer>
+
+<nav class="bottom-nav">
+  <button id="nav-home" class="active" onclick="showPage('home')">🏠<br>Головна</button>
+  <button id="nav-catalog" onclick="showPage('catalog')">🌱<br>Каталог</button>
+  <button id="nav-cart" onclick="showPage('cart')">🛒 <span id="cartCount">0</span><br>Кошик</button>
+</nav>
+
+<script>
+const tg = window.Telegram && window.Telegram.WebApp;
+if (tg) {
+  tg.ready();
+  tg.expand();
+}
+
+const plants = [
+  {
+    id: 1,
+    name: "Монстера",
+    description: "Ефектна тропічна красуня",
+    price: 450,
+    image: "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2,
+    name: "Сансевієрія",
+    description: "Невибаглива й стильна",
+    price: 320,
+    image: "https://images.unsplash.com/photo-1593482892290-f54927ae2b7e?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 3,
+    name: "Спатифілум",
+    description: "Ніжні білі квіти",
+    price: 380,
+    image: "https://images.unsplash.com/photo-1593691509543-c55fb32e5cee?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 4,
+    name: "Заміокулькас",
+    description: "Блискуче зелене листя",
+    price: 520,
+    image: "https://images.unsplash.com/photo-1632207691143-643e2d7a6b5a?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 5,
+    name: "Фікус",
+    description: "Зелений акцент в інтер'єрі",
+    price: 490,
+    image: "https://images.unsplash.com/photo-1509423350716-97f9360b4e09?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 6,
+    name: "Потос",
+    description: "Красиві пагони для полиць",
+    price: 260,
+    image: "https://images.unsplash.com/photo-1616690248863-4a6c3c4c5c4e?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 7,
+    name: "Алое вера",
+    description: "Сукулент для сонячного місця",
+    price: 220,
+    image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 8,
+    name: "Калатея",
+    description: "Візерункове декоративне листя",
+    price: 410,
+    image: "https://images.unsplash.com/photo-1597055181300-e3633a917c8c?auto=format&fit=crop&w=600&q=80"
+  }
+];
+
+let cart = {};
+
+try {
+  cart = JSON.parse(localStorage.getItem("greenHomeCart") || "{}");
+} catch (e) {
+  cart = {};
+}
+
+function saveCart() {
+  try {
+    localStorage.setItem("greenHomeCart", JSON.stringify(cart));
+  } catch (e) {}
+  updateCartCount();
+}
+
+function updateCartCount() {
+  const count = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+  document.getElementById("cartCount").textContent = count;
+}
+
+function productCard(p) {
+  return `
+    <article class="card">
+      <img src="${p.image}" alt="${p.name}" loading="lazy"
+           onerror="this.style.display='none'">
+      <div class="card-body">
+        <span class="badge">GREEN HOME</span>
+        <h3>${p.name}</h3>
+        <p>${p.description}</p>
+        <div class="price">${p.price} грн</div>
+        <button class="primary" onclick="addToCart(${p.id})">+ До кошика</button>
+      </div>
+    </article>`;
+}
+
+function renderCatalog() {
+  document.getElementById("products").innerHTML =
+    plants.map(productCard).join("");
+
+  document.getElementById("featured").innerHTML =
+    plants.slice(0, 4).map(productCard).join("");
+}
+
+function addToCart(id) {
+  cart[id] = (cart[id] || 0) + 1;
+  saveCart();
+  if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred("light");
+  showToast("Рослину додано до кошика 🌿");
+}
+
+function changeQuantity(id, delta) {
+  cart[id] = (cart[id] || 0) + delta;
+  if (cart[id] <= 0) delete cart[id];
+  saveCart();
+  renderCart();
+}
+
+function getTotal() {
+  return plants.reduce((sum, p) => sum + p.price * (cart[p.id] || 0), 0);
+}
+
+function renderCart() {
+  const container = document.getElementById("cartItems");
+  const entries = plants.filter(p => cart[p.id] > 0);
+  const empty = entries.length === 0;
+
+  document.getElementById("emptyCart").style.display = empty ? "block" : "none";
+  document.getElementById("cartSummary").style.display = empty ? "none" : "block";
+
+  container.innerHTML = entries.map(p => `
+    <div class="item-row">
+      <img src="${p.image}" alt="${p.name}" onerror="this.style.display='none'">
+      <div class="item-info">
+        <strong>${p.name}</strong>
+        <small>${p.price} грн × ${cart[p.id]}</small>
+      </div>
+      <div class="quantity">
+        <button onclick="changeQuantity(${p.id},-1)">−</button>
+        <span>${cart[p.id]}</span>
+        <button onclick="changeQuantity(${p.id},1)">+</button>
+      </div>
+    </div>
+  `).join("");
+
+  document.getElementById("total").textContent = getTotal() + " грн";
+  document.getElementById("checkoutTotal").textContent = getTotal() + " грн";
+}
+
+function showPage(id) {
+  if (id === "checkout" && getTotal() === 0) {
+    showPage("catalog");
+    showToast("Спочатку додай рослину до кошика");
+    return;
+  }
+
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.remove("active");
+  });
+
+  const page = document.getElementById(id);
+  if (page) page.classList.add("active");
+
+  document.querySelectorAll(".bottom-nav button").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  const nav = document.getElementById("nav-" + id);
+  if (nav) nav.classList.add("active");
+
+  if (id === "cart" || id === "checkout") renderCart();
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function showToast(message) {
+  let toast = document.getElementById("toast");
+
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "toast";
+    toast.style.cssText =
+      "position:fixed;bottom:85px;left:50%;transform:translateX(-50%);" +
+      "background:#244b35;color:white;padding:12px 18px;border-radius:12px;" +
+      "font-size:14px;z-index:10;max-width:90%;text-align:center";
+    document.body.appendChild(toast);
+  }
+
+  toast.textContent = message;
+  toast.style.display = "block";
+
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => {
+    toast.style.display = "none";
+  }, 2200);
+}
+
+document.getElementById("orderForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  if (getTotal() === 0) {
+    showPage("cart");
+    return;
+  }
+
+  const name = document.getElementById("customerName").value.trim();
+  const phone = document.getElementById("customerPhone").value.trim();
+  const delivery = document.getElementById("delivery").value;
+  const address = document.getElementById("address").value.trim();
+  const comment = document.getElementById("comment").value.trim();
+
+  const items = plants
+    .filter(p => cart[p.id] > 0)
+    .map(p => `${p.name} × ${cart[p.id]} — ${p.price * cart[p.id]} грн`)
+    .join("\n");
+
+  const order = [
+    "🌿 GREEN HOME — ЗАМОВЛЕННЯ",
+    "",
+    "Ім'я: " + name,
+    "Телефон: " + phone,
+    "Доставка: " + delivery,
+    "Адреса / відділення: " + address,
+    "",
+    "ТОВАРИ:",
+    items,
+    "",
+    "РАЗОМ: " + getTotal() + " грн",
+    comment ? "\nКоментар: " + comment : ""
+  ].join("\n");
+
+  document.getElementById("orderText").value = order;
+  showPage("success");
+});
+
+async function copyOrder() {
+  const text = document.getElementById("orderText").value;
+
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const field = document.getElementById("orderText");
+      field.focus();
+      field.select();
+      document.execCommand("copy");
+    }
+
+    showToast("Текст замовлення скопійовано!");
+  } catch (e) {
+    const field = document.getElementById("orderText");
+    field.focus();
+    field.select();
+    showToast("Виділи текст і скопіюй його вручну");
+  }
+}
+
+renderCatalog();
+updateCartCount();
+renderCart();
+</script>
+
+</body>
+</html>
